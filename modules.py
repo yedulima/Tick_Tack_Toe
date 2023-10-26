@@ -1,62 +1,108 @@
-def showBoard(board: list) -> None:
-    for line in range(3):
-        for column in range(3):
-            if column != 2:
-                print(board[line][column], end=' | ')
-                continue
-            print(''.join(board[line][column]))
-        print('-'*10)
+import random
+import os
 
-def swapPlayer(current_player: str, players: list) -> str:
-    player_index = players.index(current_player)
+class tickTack:
+    empty = ' '
 
-    if players[player_index] == players[-1]:
-        return players[0]
-    return players[-1]
-
-def returnNumberOfNumBoard(num: int) -> tuple:
-    num_board = [
-        [7, 8, 9],
-        [4, 5, 6],
-        [1, 2, 3]
-    ]
-
-    for line in range(3):
-        for column in range(3):
-            if num_board[line][column] == num:
-                return line, column
+    def __init__(self, players):
+        self.board = [
+            [tickTack.empty, tickTack.empty, tickTack.empty],
+            [tickTack.empty, tickTack.empty, tickTack.empty],
+            [tickTack.empty, tickTack.empty, tickTack.empty]
+        ]
+        self.players = players
+        self.player = random.choice(self.players)
     
-    return 404, False # Not found
+    def runGame(self) -> None:
+        os.system('clear')
 
-def markInBoard(board: list, num: int, player: str) -> tuple:
-    line, column = returnNumberOfNumBoard(num)
+        labels = 9
 
-    if line == 404 or board[line][column] != ' ':
-        print(f"\n{'⚠': ^42}\n╔{'─'*40}╗\n|{'Ação inválida':^40}{'|': ^2}\n╚{'─'*40}╝\n")
-        input()
-        return False, '_'
+        while labels:
+            tickTack.showBoard()
+            while True:
+                try:
+                    op = int(input("Número de 1 a 9: "))
+                except:
+                    print(f"\n{'⚠': ^42}\n╔{'─'*40}╗\n|{'Ação inválida':^40}{'|': ^2}\n╚{'─'*40}╝\n")
+                    input()
+                else:
+                    break
 
-    board[line][column] = player
+            verify, new_board = tickTack.markInBoard(self.board, op, self.player)
 
-    return True, board
+            if verify:
+                labels -= 1
+                self.board = new_board
+                win_check = tickTack.checkWinner(self.board, self.player)
 
-def checkWinner(board: list, player: str) -> bool:
-    # Diagonal direita
-    if (board[0][2] == player) and (board[1][1] == player) and (board[2][0] == player):
-        return True
+                if win_check:
+                    tickTack.showBoard(self.board)
+                    break
 
-    # Diagonar esquerda
-    elif (board[0][0] == player) and (board[1][1] == player) and (board[2][2] == player):
-        return True
+                self.player = tickTack.swapPlayer(self.player, self.players)
 
-    # Horizontal
-    for line in range(3):
-        if (board[line][0] == player) and (board[line][1] == player) and (board[line][2] == player):
+            os.system('clear')
+
+    def showBoard(self) -> None:
+        for line in range(3):
+            for column in range(3):
+                if column != 2:
+                    print(self.board[line][column], end=' | ')
+                    continue
+                print(''.join(self.board[line][column]))
+            print('-'*10)
+
+    def swapPlayer(current_player: str, players: list) -> str:
+        player_index = players.index(current_player)
+
+        if players[player_index] == players[-1]:
+            return players[0]
+        return players[-1]
+
+    def returnNumberOfNumBoard(num: int) -> tuple:
+        num_board = [
+            [7, 8, 9],
+            [4, 5, 6],
+            [1, 2, 3]
+        ]
+
+        for line in range(3):
+            for column in range(3):
+                if num_board[line][column] == num:
+                    return line, column
+        
+        return 404, False # Not found
+
+    def markInBoard(board: list, num: int, player: str) -> tuple:
+        line, column = tickTack.returnNumberOfNumBoard(num)
+
+        if line == 404 or board[line][column] != ' ':
+            print(f"\n{'⚠': ^42}\n╔{'─'*40}╗\n|{'Ação inválida':^40}{'|': ^2}\n╚{'─'*40}╝\n")
+            input()
+            return False, '_'
+
+        board[line][column] = player
+
+        return True, board
+
+    def checkWinner(board: list, player: str) -> bool:
+        # Diagonal direita
+        if (board[0][2] == player) and (board[1][1] == player) and (board[2][0] == player):
             return True
 
-    # Vertical
-    for column in range(3):
-        if (board[0][column] == player) and (board[1][column] == player) and (board[2][column] == player):
+        # Diagonar esquerda
+        elif (board[0][0] == player) and (board[1][1] == player) and (board[2][2] == player):
             return True
 
-    return False
+        # Horizontal
+        for line in range(3):
+            if (board[line][0] == player) and (board[line][1] == player) and (board[line][2] == player):
+                return True
+
+        # Vertical
+        for column in range(3):
+            if (board[0][column] == player) and (board[1][column] == player) and (board[2][column] == player):
+                return True
+
+        return False

@@ -9,49 +9,15 @@
                                    by Carlos Eduardo
 '''
 
-from modules import *
-import random
-import os
+from modules import tickTack
 
 if __name__ == '__main__':
-    empty = ' '
-    board = [
-        [empty, empty, empty],
-        [empty, empty, empty],
-        [empty, empty, empty]
-    ]
 
-    labels = 9
+    player_1 = input("Insira o caractere do player 1: ").strip()
+    player_2 = input("Insira o caractere do player 2: ").strip()
 
-    players = ['x', 'o']
-    player = random.choice(players)
+    gaem = tickTack([player_1, player_2])
 
-    os.system('clear')
+    # gaem.runGame()
 
-    while labels:
-        showBoard(board)
-        while True:
-            try:
-                op = int(input("Número de 1 a 9: "))
-            except:
-                print(f"\n{'⚠': ^42}\n╔{'─'*40}╗\n|{'Ação inválida':^40}{'|': ^2}\n╚{'─'*40}╝\n")
-                input()
-            else:
-                break
-
-        verify, new_board = markInBoard(board, op, player)
-
-        if verify:
-            labels -= 1
-            board = new_board
-            win_check = checkWinner(board, player)
-
-            if win_check:
-                showBoard(board)
-                break
-
-            player = swapPlayer(player, players)
-
-        os.system('clear')
-
-    print("Game over")
+    gaem.showBoard()
