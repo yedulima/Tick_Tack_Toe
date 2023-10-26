@@ -1,29 +1,79 @@
-import random
 import os
+import json
+
+def menu() -> int:
+
+    while True:
+        os.system('clear')
+        print('''
+    ▀█▀ █ █▀▀ █▄▀   ▀█▀ ▄▀█ █▀▀ █▄▀   ▀█▀ █▀█ █▀▀
+    ░█░ █ █▄▄ █░█   ░█░ █▀█ █▄▄ █░█   ░█░ █▄█ ██▄
+        ''')
+        for _ in ["[1] - Jogar", "[2] - Créditos", "[3] - Placar", "[0] - Sair"]:
+            print(f"    {_}")
+        try:
+            choice = int(input("\n    Opção: ").strip())
+        except:
+            os.system('clear')
+            print(f"\n{'⚠': ^42}\n╔{'─'*40}╗\n|{'Ação inválida':^40}{'|': ^2}\n╚{'─'*40}╝\n")
+            input()
+        else:
+            break
+
+    return choice
+
+def credits() -> None:
+    os.system('clear')
+    print('''
+    █▀▀ █▀█ █▀▀ █▀▄ █ ▀█▀ █▀
+    █▄▄ █▀▄ ██▄ █▄▀ █ ░█░ ▄█
+ 
+ Carlos Eduardo & Anderson Lucas
+    ''')
+    input()
+
+def scoreBoard() -> None:
+    os.system('clear')
+
+    score = json.load(open('./score.json', 'r'))
+
+    print(''' 
+    █▀ █▀▀ █▀█ █▀█ █▀▀ █▄▄ █▀█ ▄▀█ █▀█ █▀▄
+    ▄█ █▄▄ █▄█ █▀▄ ██▄ █▄█ █▄█ █▀█ █▀▄ █▄▀
+    ''')
+
+    print(' '*10, f'{"PLAYER": ^10}|{"WINS": ^10}')
+    for player, points in score.items():
+        print(' '*10, '-'*21)
+        print(' '*10, f'{player: ^10}|{points: ^10}')
+
+    input()
 
 class tickTack:
     empty = ' '
 
-    def __init__(self, players):
+    def __init__(self):
         self.board = [
             [tickTack.empty, tickTack.empty, tickTack.empty],
             [tickTack.empty, tickTack.empty, tickTack.empty],
             [tickTack.empty, tickTack.empty, tickTack.empty]
         ]
-        self.players = players
-        self.player = players[0]
+        self.players = ['X', 'O']
+        self.player = self.players[0]
+        self.score = json.load(open('./score.json', 'r'))
     
     def runGame(self) -> None:
-        os.system('clear')
-
         labels = 9
 
         while labels:
-            tickTack.showBoard(self)
+            os.system('clear')
             while True:
                 try:
-                    op = int(input("Número de 1 a 9: "))
+                    os.system('clear')
+                    tickTack.showBoard(self)
+                    op = int(input(f"Vez do {self.player}\nNúmero de 1 a 9: "))
                 except:
+                    os.system('clear')
                     print(f"\n{'⚠': ^42}\n╔{'─'*40}╗\n|{'Ação inválida':^40}{'|': ^2}\n╚{'─'*40}╝\n")
                     input()
                 else:
@@ -37,23 +87,48 @@ class tickTack:
                 win_check = tickTack.checkWinner(self, self.board, self.player)
 
                 if win_check:
-                    tickTack.showBoard(self)
-                    print("AAA")
+                    os.system('clear')
+                    self.score[self.player] += 1
+                    json.dump(self.score, open('./score.json', 'w'))
+                    if self.player == 'X':
+                        print('''
+    ░░█ █▀█ █▀▀ ▄▀█ █▀▄ █▀█ █▀█   ▀▄▀   █▀▀ ▄▀█ █▄░█ █░█ █▀█ █░█
+    █▄█ █▄█ █▄█ █▀█ █▄▀ █▄█ █▀▄   █░█   █▄█ █▀█ █░▀█ █▀█ █▄█ █▄█
+                    ''')
+                        input()
+                        return
+                    
+                    print('''
+    ░░█ █▀█ █▀▀ ▄▀█ █▀▄ █▀█ █▀█   █▀█   █▀▀ ▄▀█ █▄░█ █░█ █▀█ █░█
+    █▄█ █▄█ █▄█ █▀█ █▄▀ █▄█ █▀▄   █▄█   █▄█ █▀█ █░▀█ █▀█ █▄█ █▄█
+                    ''')
                     input()
-                    break
+                    return
 
                 self.player = tickTack.swapPlayer(self, self.player, self.players)
+        os.system('clear')
+        print('''
 
-            os.system('clear')
+    █▀▀ █▀▄▀█ █▀█ ▄▀█ ▀█▀ █▀▀
+    ██▄ █░▀░█ █▀▀ █▀█ ░█░ ██▄
+        ''')
+        input()
+        
 
     def showBoard(self) -> None:
+        tickTack.showScore(self)
         for line in range(3):
             for column in range(3):
                 if column != 2:
-                    print(self.board[line][column], end=' | ')
+                    print(f'{self.board[line][column]: ^5}', end=' | ')
                     continue
-                print(''.join(self.board[line][column]))
-            print('-'*10)
+                print(f'{self.board[line][column]: ^5}')
+            print('-'*20)
+
+    def showScore(self) -> None:
+        x = self.score['X']
+        o = self.score['O']
+        print(f'{"="*5}{"Score": ^10}{"="*5}\n{f"X: {x}  O: {o}": ^20}')
 
     def swapPlayer(self, current_player: str, players: list) -> str:
         player_index = players.index(current_player)

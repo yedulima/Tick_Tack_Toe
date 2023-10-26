@@ -6,16 +6,20 @@
 ██╗░░██║██║░░██║██║░░╚██╗██║░░██║  ██║░░██║██╔══██║  ░╚████╔╝░██╔══╝░░██║░░░░░██╔══██║██╔══██║
 ╚█████╔╝╚█████╔╝╚██████╔╝╚█████╔╝  ██████╔╝██║░░██║  ░░╚██╔╝░░███████╗███████╗██║░░██║██║░░██║
 ░╚════╝░░╚════╝░░╚═════╝░░╚════╝░  ╚═════╝░╚═╝░░╚═╝  ░░░╚═╝░░░╚══════╝╚══════╝╚═╝░░╚═╝╚═╝░░╚═╝
-                                   by Carlos Eduardo
+                          by Carlos Eduardo & Anderson Lucas
 '''
 
-from modules import tickTack
+from modules import *
 
 if __name__ == '__main__':
+    while True:
+        choice = menu()
 
-    player_1 = input("Insira o caractere do player 1: ").strip()
-    player_2 = input("Insira o caractere do player 2: ").strip()
-
-    gaem = tickTack([player_1, player_2])
-
-    gaem.runGame()
+        if choice == 1:
+            tickTack().runGame()
+        elif choice == 2:
+            credits()
+        elif choice == 3:
+            scoreBoard()
+        elif choice == 0:
+            break
