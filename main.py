@@ -18,6 +18,4 @@ if __name__ == '__main__':
 
     gaem = tickTack([player_1, player_2])
 
-    # gaem.runGame()
-
-    gaem.showBoard()
+    gaem.runGame()

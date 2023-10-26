@@ -11,7 +11,7 @@ class tickTack:
             [tickTack.empty, tickTack.empty, tickTack.empty]
         ]
         self.players = players
-        self.player = random.choice(self.players)
+        self.player = players[0]
     
     def runGame(self) -> None:
         os.system('clear')
@@ -19,7 +19,7 @@ class tickTack:
         labels = 9
 
         while labels:
-            tickTack.showBoard()
+            tickTack.showBoard(self)
             while True:
                 try:
                     op = int(input("Número de 1 a 9: "))
@@ -29,18 +29,20 @@ class tickTack:
                 else:
                     break
 
-            verify, new_board = tickTack.markInBoard(self.board, op, self.player)
+            verify, new_board = tickTack.markInBoard(self, self.board, op, self.player)
 
             if verify:
                 labels -= 1
                 self.board = new_board
-                win_check = tickTack.checkWinner(self.board, self.player)
+                win_check = tickTack.checkWinner(self, self.board, self.player)
 
                 if win_check:
-                    tickTack.showBoard(self.board)
+                    tickTack.showBoard(self)
+                    print("AAA")
+                    input()
                     break
 
-                self.player = tickTack.swapPlayer(self.player, self.players)
+                self.player = tickTack.swapPlayer(self, self.player, self.players)
 
             os.system('clear')
 
@@ -53,14 +55,14 @@ class tickTack:
                 print(''.join(self.board[line][column]))
             print('-'*10)
 
-    def swapPlayer(current_player: str, players: list) -> str:
+    def swapPlayer(self, current_player: str, players: list) -> str:
         player_index = players.index(current_player)
 
         if players[player_index] == players[-1]:
             return players[0]
         return players[-1]
 
-    def returnNumberOfNumBoard(num: int) -> tuple:
+    def returnNumberOfNumBoard(self, num: int) -> tuple:
         num_board = [
             [7, 8, 9],
             [4, 5, 6],
@@ -74,8 +76,8 @@ class tickTack:
         
         return 404, False # Not found
 
-    def markInBoard(board: list, num: int, player: str) -> tuple:
-        line, column = tickTack.returnNumberOfNumBoard(num)
+    def markInBoard(self, board: list, num: int, player: str) -> tuple:
+        line, column = tickTack.returnNumberOfNumBoard(self, num)
 
         if line == 404 or board[line][column] != ' ':
             print(f"\n{'⚠': ^42}\n╔{'─'*40}╗\n|{'Ação inválida':^40}{'|': ^2}\n╚{'─'*40}╝\n")
@@ -86,7 +88,7 @@ class tickTack:
 
         return True, board
 
-    def checkWinner(board: list, player: str) -> bool:
+    def checkWinner(self, board: list, player: str) -> bool:
         # Diagonal direita
         if (board[0][2] == player) and (board[1][1] == player) and (board[2][0] == player):
             return True
